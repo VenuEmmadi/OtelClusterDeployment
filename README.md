@@ -1,5 +1,5 @@
 
-**Deploying the Application to AKS (Optional):**
+**Deploying the Application to Kubernetes Cluster:**
 
 This section outlines the steps to deploy the application to an Azure Kubernetes Service (AKS) cluster. You'll need your resource group name and cluster name for these commands.
 
@@ -10,7 +10,7 @@ This section outlines the steps to deploy the application to an Azure Kubernetes
 
 **Steps:**
 
-1. **Get AKS Cluster Credentials:**
+1. **Get AKS (if you are using AKS) Cluster Credentials:**
 
    ```bash
    az aks get-credentials --resource-group <YOUR_RESOURCEGROUP_NAME> --name <YOUR_CLUSTER_NAME> --overwrite
