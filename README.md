@@ -14,14 +14,14 @@ This section outlines the steps to deploy the application to an Azure Kubernetes
 
    ```bash
    az aks get-credentials --resource-group <YOUR_RESOURCEGROUP_NAME> --name <YOUR_CLUSTER_NAME> --overwrite
-
+2. **Deploy Configuration Files:**
 kubectl apply -f configmap-collector.yml
 kubectl apply -f configmap-tempo.yml
 kubectl apply -f configmap-prometheus.yml
 kubectl apply -f configmap-grafana.yml
 
 
-
+3. **Deploy Application Components:**
 kubectl apply -f deployment-employee.yml
 kubectl apply -f deployment-collector.yml
 kubectl apply -f deployment-tempo.yml
