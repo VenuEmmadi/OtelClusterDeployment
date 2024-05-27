@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: employee
+  template:
+    metadata:
+      labels:
+        app: employee
+    spec:
+      containers:
+      - name: employee
+        image: venuacr.azurecr.io/employee:0.0.1-SNAPSHOT
+        ports:
+        - containerPort: 8080
+        env:
+        - name: OTEL_SERVICE_NAME
+          value: "employee-service"
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://postgres:5432/opentelemetry"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "postgres"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "postgres"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service=employee-service,env=dev"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://collector:4317"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: employee
+spec:
+  selector:
+    app: employee
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
