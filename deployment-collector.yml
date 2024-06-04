@@ -1,9 +1,8 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: collector
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: collector
@@ -21,6 +20,12 @@ spec:
         - name: config-volume
           mountPath: /etc/otelcol-contrib/otel-collector.yml
           subPath: otel-collector.yml
+        - name: varlogpods
+          mountPath: /var/log/pods
+          readOnly: true
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
         env:
         - name: K8S_NODE_NAME
           valueFrom:
@@ -30,6 +35,12 @@ spec:
       - name: config-volume
         configMap:
           name: otel-collector-config
+      - name: varlogpods
+        hostPath:
+          path: /var/log/pods
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
       restartPolicy: Always
 ---
 apiVersion: v1
@@ -48,4 +59,4 @@ spec:
       port: 8889
       targetPort: 8889
       name: prometheus
-  type: LoadBalancer
+  type: ClusterIP

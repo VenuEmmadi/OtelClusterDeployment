@@ -2,6 +2,7 @@ kubectl apply -f otel-collector-rbac.yaml
 
 Restart the OpenTelemetry Collector Deployment:
 kubectl rollout restart deployment collector
+kubectl rollout restart deamonset collector
 
 Verify the Logs:
 kubectl logs -l app=collector
@@ -24,15 +25,3 @@ Disk: container_fs_reads_total and container_fs_writes_total: These metrics trac
 Network: container_network_receive_bytes_total and container_network_transmit_bytes_total: These metrics track the total bytes received and transmitted by a container over the network.
 
 
-/etc/kubernetes/kubelet.config
-kubelet_cadvisor_shared_metrics_subset 
-
-under k8s_cluster
-node_conditions_to_report:
-          - Ready
-          - MemoryPressure
-        allocatable_types_to_report:
-          - cpu
-          - memory
-          - network
-          - disk
