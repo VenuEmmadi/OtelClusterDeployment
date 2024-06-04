@@ -12,6 +12,7 @@ spec:
       labels:
         app: collector
     spec:
+      serviceAccountName: collector-sa  # Specify the ServiceAccount
       containers:
       - name: collector
         image: otel/opentelemetry-collector-contrib:0.91.0
@@ -20,6 +21,11 @@ spec:
         - name: config-volume
           mountPath: /etc/otelcol-contrib/otel-collector.yml
           subPath: otel-collector.yml
+        env:
+        - name: K8S_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
       volumes:
       - name: config-volume
         configMap:

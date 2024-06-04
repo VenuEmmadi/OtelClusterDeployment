@@ -1,0 +1,38 @@
+kubectl apply -f otel-collector-rbac.yaml
+
+Restart the OpenTelemetry Collector Deployment:
+kubectl rollout restart deployment collector
+
+Verify the Logs:
+kubectl logs -l app=collector
+
+Remove Service Accounts:
+kubectl delete serviceaccount <service-account-name> -n <namespace>
+kubectl delete serviceaccount  -n default
+
+
+Reference:
+https://opentelemetry.io/docs/kubernetes/collector/components/#prometheus-receiver
+
+
+CPU: container_cpu_usage_seconds_total: Similar to container_cpu_time_seconds_total, this metric represents CPU utilization as a percentage. There might also be metrics for CPU throttling events.
+
+Memory: container_memory_usage_bytes: This metric indicates the current memory usage of a container in bytes. Additional metrics might track cache and swap usage.
+
+Disk: container_fs_reads_total and container_fs_writes_total: These metrics track the total number of disk reads and writes performed by a container.
+
+Network: container_network_receive_bytes_total and container_network_transmit_bytes_total: These metrics track the total bytes received and transmitted by a container over the network.
+
+
+/etc/kubernetes/kubelet.config
+kubelet_cadvisor_shared_metrics_subset 
+
+under k8s_cluster
+node_conditions_to_report:
+          - Ready
+          - MemoryPressure
+        allocatable_types_to_report:
+          - cpu
+          - memory
+          - network
+          - disk

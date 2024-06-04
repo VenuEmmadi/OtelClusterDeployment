@@ -1,0 +1,10 @@
+
+-> Java Agent setup : https://opentelemetry.io/docs/zero-code/java/agent/
+-> Exporter Config (ENV Var) : https://github.com/open-telemetry/opentelemetry-java/blob/main/sdk-extensions/autoconfigure/README.md#otlp-exporter-span-metric-and-log-exporters
+-> Collector config : https://opentelemetry.io/docs/collector/configuration/
+-> 
+-> Download Kompose from here : https://github.com/kubernetes/kompose/releases
+
+--------------------------------------------------------------------------------------------
+check resoure_to_telemetry_conersion in otelcollector
+--storage.tsdb.retention.time=60d
