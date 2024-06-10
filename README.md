@@ -1,4 +1,3 @@
-
 **Deploying the OpenTelemetry Collector to Kubernetes Cluster:**
 
 This section outlines the steps to deploy the OpenTelemetry Collector to an Azure Kubernetes Service (AKS) cluster.
