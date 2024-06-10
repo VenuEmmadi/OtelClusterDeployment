@@ -1,4 +1,4 @@
-**OpenTelemetry Collector Configuration and Deployment for Kubernetes:**
+<h1>OpenTelemetry Collector Configuration and Deployment for Kubernetes</h1>
 
 This repository provides configuration and deployment files for the OpenTelemetry Collector in a Kubernetes environment. The collector ingests metrics, traces, and logs from various sources and exports them to backend systems for analysis and monitoring.
 
