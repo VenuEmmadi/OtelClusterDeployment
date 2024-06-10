@@ -44,7 +44,7 @@ The var/log/pods and /var/lib/docker/containers directories are mounted read-onl
 **Note**
 * In configmap-collector.yml file, ensure to modify the prometheusremotewrite, Prometheus, Loki and otlp/tempo endpoint with proper port number. <br>
 * In deployment-collector.yml file , ensure to modify the,
-   - "Kind" value with required kind type(daemonset, deployment or sidecar)
+   - "Kind" value with required kind type(daemonset or deployment)
    - "serviceAccountName" Replace with your required service account name
    - "image" Replace with the proper image name
    - Under "VolumeMounts" section ensure to change the mount paths of otel-collector.yml  with your own directory names.
