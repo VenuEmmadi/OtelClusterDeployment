@@ -67,9 +67,19 @@ metadata:
   name: collector
 
 spec:
+  # This defines the pod selector that the Service will target. Pods with matching labels will be included in the service.
   selector:
     app: collector  
 
   ports:
   - protocol: TCP  # Defines the protocol (TCP in this case).
-    port: 4317  # This defines
+    port: 4317  # This defines the port on the Service where traffic will be directed.
+    targetPort: 4317  # This defines the port on the pods that the Service will route traffic to.
+    name: otlp-grpc  # This defines a name for the port (optional but helpful for clarity).
+  - protocol: TCP  # Defines the protocol (TCP in this case).
+    port: 8889  # This defines the port on the Service where traffic will be directed.
+    targetPort: 8889  # This defines the port on the pods that the Service will route traffic to.
+    name: prometheus  # This defines a name for the port (optional but helpful for clarity).
+
+  # This defines the type of Service. In this case, ClusterIP creates a service that is only accessible from within the Kubernetes cluster.
+  type: ClusterIP  
