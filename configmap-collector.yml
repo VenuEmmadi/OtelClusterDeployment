@@ -1,13 +1,9 @@
 # This line specifies the version of the Kubernetes API being used (v1 is the standard version)
 apiVersion: v1
-
 # This line defines the kind of Kubernetes resource being created (ConfigMap)
 kind: ConfigMap
-
 metadata:
-  
   name: otel-collector-config
-
 
 data:
   otel-collector.yml: 
