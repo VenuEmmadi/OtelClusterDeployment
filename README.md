@@ -33,6 +33,7 @@ Three pipelines are defined: metrics, traces, and logs. Each pipeline specifies 
 <h2>Deployment (deployment-collector.yml)</h2>
 The deployment-collector.yml file defines a DaemonSet to deploy the OpenTelemetry Collector on every Kubernetes node.
 
+
 **Key points:**
 
 - The DaemonSet ensures a single collector instance runs on each node.<br>
