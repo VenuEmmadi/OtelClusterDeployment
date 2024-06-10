@@ -35,11 +35,11 @@ The deployment-collector.yml file defines a DaemonSet to deploy the OpenTelemetr
 
 **Key points:**
 
-The DaemonSet ensures a single collector instance runs on each node.
-The collector container image uses otel/opentelemetry-collector-contrib:0.91.0 (or adjust the version as needed).
-The container mounts the configuration from the otel-collector-config ConfigMap as /etc/otelcol-contrib/otel-collector.yml.
-The collector container reads the Kubernetes node name from the environment variable K8S_NODE_NAME for the kubeletstats receiver configuration.<br>
-The var/log/pods and /var/lib/docker/containers directories are mounted read-only for potential use by receivers (modify if different paths are used).
+- The DaemonSet ensures a single collector instance runs on each node.<br>
+- The collector container image uses *otel/opentelemetry-collector-contrib:0.91.0* (or adjust the version as needed).
+- The container mounts the configuration from the otel-collector-config ConfigMap as */etc/otelcol-contrib/otel-collector.yml*.
+- The collector container reads the Kubernetes node name from the environment variable *K8S_NODE_NAME* for the kubeletstats receiver configuration.<br>
+- The *var/log/pods* and */var/lib/docker/containers* directories are mounted read-only for potential use by receivers (modify if different paths are used).
 
 **Note**
 * In configmap-collector.yml file, ensure to modify the prometheusremotewrite, Prometheus, Loki and otlp/tempo endpoint with proper port number. <br>
