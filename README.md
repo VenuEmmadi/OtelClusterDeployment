@@ -1,6 +1,38 @@
-**Deploying the OpenTelemetry Collector to Kubernetes Cluster:**
+**OpenTelemetry Collector Configuration and Deployment for Kubernetes:**
 
-This section outlines the steps to deploy the OpenTelemetry Collector to an Azure Kubernetes Service (AKS) cluster.
+This repository provides configuration and deployment files for the OpenTelemetry Collector in a Kubernetes environment. The collector ingests metrics, traces, and logs from various sources and exports them to backend systems for analysis and monitoring.
+
+**Configuration (configmap_collector.yml)**
+
+The configmap_collector.yml file defines the configuration for the OpenTelemetry Collector using a ConfigMap. It contains the following sections:
+
+**Receivers:**
+otlp: Defines an OpenTelemetry Protocol (OTLP) receiver for ingesting data from client applications.
+kubeletstats: Scrapes metrics from kubelets using the kubelet API. Configurable options include collection interval, authentication type, endpoint, insecure mode, and metric groups to collect.
+k8s_cluster: Scrapes metrics from the Kubernetes API server. Configurable options include collection interval and authentication type.
+**Processors:**
+batch: Batches data before export to improve efficiency. Configurable options include maximum batch size, minimum batch size, and timeout.
+memory_limiter: Limits the memory usage of the collector to prevent resource exhaustion. Configurable options include check interval, memory limit, and spike limit (temporary increase in allowed memory).
+k8sattributes: Extracted Kubernetes metadata from received data for enrichment. Configurable options include authentication type, passthrough behavior, and list of metadata attributes to extract.
+**Exporters:**
+debug: Exports data to a debug output stream for troubleshooting. Configurable verbosity level.
+prometheusremotewrite: Exports metrics to a Prometheus remote write endpoint. Configurable endpoint URL.
+prometheus: Exposes metrics scraped by the collector at a Prometheus endpoint. Configurable endpoint URL and open metrics behavior.
+otlp/tempo: Exports traces to Tempo, a distributed tracing backend. Configurable endpoint URL and insecure mode setting.
+loki: Exports logs to Loki, a horizontally scalable log aggregation system. Configurable endpoint URL.
+**Service Pipelines:**
+Three pipelines are defined: metrics, traces, and logs. Each pipeline specifies the receivers, processors, and exporters to be used for that type of data.
+
+**Deployment (deployment-collector.yml)**
+The deployment-collector.yml file defines a DaemonSet to deploy the OpenTelemetry Collector on every Kubernetes node.
+
+**Key points:**
+The DaemonSet ensures a single collector instance runs on each node.
+The collector container image uses otel/opentelemetry-collector-contrib:0.91.0 (or adjust the version as needed).
+The container mounts the configuration from the otel-collector-config ConfigMap as /etc/otelcol-contrib/otel-collector.yml.
+The collector container reads the Kubernetes node name from the environment variable K8S_NODE_NAME for the kubeletstats receiver configuration.
+The var/log/pods and /var/lib/docker/containers directories are mounted read-only for potential use by receivers (modify if different paths are used).
+The collector Service exposes ports for OTLP gRPC (4317) and Prometheus (8889).
 
 **Prerequisites:**
 
