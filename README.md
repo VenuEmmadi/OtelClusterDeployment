@@ -1,7 +1,7 @@
 
-**Deploying the Application to Kubernetes Cluster:**
+**Deploying the OpenTelemetry Collector to Kubernetes Cluster:**
 
-This section outlines the steps to deploy the application to an Azure Kubernetes Service (AKS) cluster. You'll need your resource group name and cluster name for these commands.
+This section outlines the steps to deploy the OpenTelemetry Collector to an Azure Kubernetes Service (AKS) cluster.
 
 **Prerequisites:**
 
@@ -14,6 +14,7 @@ This section outlines the steps to deploy the application to an Azure Kubernetes
 
    ```bash
    az aks get-credentials --resource-group <YOUR_RESOURCEGROUP_NAME> --name <YOUR_CLUSTER_NAME> --overwrite
+
 2. **Deploy Configuration Files:**
 * kubectl apply -f configmap-collector.yml
 * kubectl apply -f configmap-tempo.yml
