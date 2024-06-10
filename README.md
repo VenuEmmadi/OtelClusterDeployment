@@ -40,31 +40,3 @@ The collector container image uses otel/opentelemetry-collector-contrib:0.91.0 (
 The container mounts the configuration from the otel-collector-config ConfigMap as /etc/otelcol-contrib/otel-collector.yml.
 The collector container reads the Kubernetes node name from the environment variable K8S_NODE_NAME for the kubeletstats receiver configuration.<br>
 The var/log/pods and /var/lib/docker/containers directories are mounted read-only for potential use by receivers (modify if different paths are used).
-
-**Prerequisites:**
-
-* Azure CLI with AKS extension installed (https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows)
-* kubectl configured to access your AKS cluster
-
-**Steps:**
-
-1. **Get AKS (if you are using AKS) Cluster Credentials:**
-
-   ```bash
-   az aks get-credentials --resource-group <YOUR_RESOURCEGROUP_NAME> --name <YOUR_CLUSTER_NAME> --overwrite
-
-2. **Deploy Configuration Files:**
-* kubectl apply -f configmap-collector.yml
-* kubectl apply -f configmap-tempo.yml
-* kubectl apply -f configmap-prometheus.yml
-* kubectl apply -f configmap-grafana.yml
-
-
-3. **Deploy Application Components:**
-* kubectl apply -f deployment-employee.yml
-* kubectl apply -f deployment-collector.yml
-* kubectl apply -f deployment-tempo.yml
-* kubectl apply -f deployment-loki.yml
-* kubectl apply -f deployment-prometheus.yml
-* kubectl apply -f deployment-grafana.yml
-* kubectl apply -f deployment-postgres.yml
