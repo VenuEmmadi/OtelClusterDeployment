@@ -31,8 +31,7 @@ The configmap_collector.yml file defines the configuration for the OpenTelemetry
 Three pipelines are defined: metrics, traces, and logs. Each pipeline specifies the receivers, processors, and exporters to be used for that type of data.
 
 <h2>Deployment (deployment-collector.yml)</h2>
-The deployment-collector.yml file defines a DaemonSet to deploy the OpenTelemetry Collector on every Kubernetes node.
-
+The deployment-collector.yml file defines a DaemonSet to deploy the OpenTelemetry Collector on every Kubernetes node.<br>
 
 **Key points:**
 
