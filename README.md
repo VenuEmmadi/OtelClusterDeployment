@@ -40,3 +40,12 @@ The collector container image uses otel/opentelemetry-collector-contrib:0.91.0 (
 The container mounts the configuration from the otel-collector-config ConfigMap as /etc/otelcol-contrib/otel-collector.yml.
 The collector container reads the Kubernetes node name from the environment variable K8S_NODE_NAME for the kubeletstats receiver configuration.<br>
 The var/log/pods and /var/lib/docker/containers directories are mounted read-only for potential use by receivers (modify if different paths are used).
+
+**Note**
+* In configmap-collector.yml file, ensure to modify the prometheusremotewrite, Prometheus, Loki and otlp/tempo endpoint with proper port number. <br>
+* In deployment-collector.yml file , ensure to modify the,
+   - "Kind" value with required kind type(daemonset, deployment or sidecar)
+   - "serviceAccountName" Replace with your required service account name
+   - "image" Replace with the proper image name
+   - Under "VolumeMounts" section ensure to change the mount paths of otel-collector.yml  with your own directory names.
+  
