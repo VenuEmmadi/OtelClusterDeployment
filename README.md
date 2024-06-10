@@ -2,7 +2,7 @@
 
 This repository provides configuration and deployment files for the OpenTelemetry Collector in a Kubernetes environment. The collector ingests metrics, traces, and logs from various sources and exports them to backend systems for analysis and monitoring.
 
-**Configuration (configmap_collector.yml)**
+<h2>Configuration (configmap_collector.yml)</h2>
 
 The configmap_collector.yml file defines the configuration for the OpenTelemetry Collector using a ConfigMap. It contains the following sections:
 
@@ -30,7 +30,7 @@ The configmap_collector.yml file defines the configuration for the OpenTelemetry
 
 Three pipelines are defined: metrics, traces, and logs. Each pipeline specifies the receivers, processors, and exporters to be used for that type of data.
 
-**Deployment (deployment-collector.yml)**
+<h2>Deployment (deployment-collector.yml)</h2>
 The deployment-collector.yml file defines a DaemonSet to deploy the OpenTelemetry Collector on every Kubernetes node.
 
 **Key points:**
