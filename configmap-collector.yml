@@ -1,44 +1,56 @@
+# This line specifies the version of the Kubernetes API being used (v1 is the standard version)
 apiVersion: v1
+
+# This line defines the kind of Kubernetes resource being created (ConfigMap)
 kind: ConfigMap
+
 metadata:
+  
   name: otel-collector-config
+
+
 data:
-  otel-collector.yml: |
+  otel-collector.yml: 
     receivers:
       otlp:
         protocols:
-          grpc:
-          http:
+          grpc: # Enables gRPC protocol for OTLP receiver
+          http:  # Enables HTTP protocol for OTLP receiver
 
+      # This defines a receiver for kubelet stats. It collects metrics from the kubelet about nodes, pods, and containers.
       kubeletstats:
-        collection_interval: 10s
-        auth_type: 'serviceAccount'
-        endpoint: '${env:K8S_NODE_NAME}:10250'
-        insecure_skip_verify: true
-        metric_groups:
+        collection_interval: 10s  # Sets the interval for collecting kubelet stats (every 10 seconds)
+        auth_type: 'serviceAccount'  # Specifies authentication type as service account
+        endpoint: '${env:K8S_NODE_NAME}:10250'  # Sets the endpoint for kubelet stats (uses environment variable for node name)
+        insecure_skip_verify: true  # Disables certificate verification (not recommended for production)
+        metric_groups:  # Defines the metric groups to be collected from kubelet
           - node
           - pod
           - container
 
+      # This defines a receiver for Kubernetes cluster metrics. It collects metrics about the overall cluster health.
       k8s_cluster:
-        collection_interval: 10s
-        auth_type: 'serviceAccount'
+        collection_interval: 10s  # Sets the interval for collecting cluster metrics (every 10 seconds)
+        auth_type: 'serviceAccount'  # Specifies authentication type as service account
 
     processors:
+      # This defines a batch processor. It batches telemetry data before sending it to exporters.
       batch:
-        send_batch_max_size: 1000
-        send_batch_size: 100
-        timeout: 10s
+        send_batch_max_size: 1000  # Sets the maximum size of a telemetry batch
+        send_batch_size: 100      # Sets the minimum size of a telemetry batch or the maximum wait time before sending
+        timeout: 10s               # Sets the maximum time to wait for a batch to be filled
 
+      # This defines a memory limiter processor. It limits the memory usage of the collector to prevent resource exhaustion.
       memory_limiter:
-        check_interval: 1s
-        limit_mib: 4000
-        spike_limit_mib: 500
+        check_interval: 1s        # Sets the interval for checking memory usage
+        limit_mib: 4000           # Sets the hard memory limit in MiB
+        spike_limit_mib: 500      # Sets the temporary memory allowance above the limit in MiB
 
+      # This defines a Kubernetes attributes processor. It adds Kubernetes-specific metadata to the telemetry data.
       k8sattributes:
-        auth_type: 'serviceAccount'
-        passthrough: false
-        extract:
+        auth_type: 'serviceAccount'  # Specifies authentication type as service account
+        passthrough: false         # Disables passing through existing attributes
+        extract:                    # Defines attributes to be extracted from Kubernetes resources
           metadata:
             - k8s.pod.name
             - k8s.namespace.name
@@ -46,35 +58,47 @@ data:
             - k8s.pod.uid
 
     exporters:
+      # This defines a debug exporter. It sends telemetry data to standard output for debugging purposes.
       debug:
-        verbosity: detailed
+        verbosity: detailed  
+
+      # This defines a Prometheus remote write exporter. It sends metrics data to a Prometheus server.
       prometheusremotewrite:
-        endpoint: "http://prometheus:9090/api/v1/write"
+        endpoint: "http://prometheus:9090/api/v1/write"  # Sets the endpoint of the Prometheus server
 
+      # This defines a Prometheus exporter. It exposes metrics data on a dedicated port for scraping.
       prometheus:
-        endpoint: "0.0.0.0:8889"
-        enable_open_metrics: true
+        endpoint: "0.0.0.0:8889"  # Sets the endpoint for scraping Prometheus metrics
+        enable_open_metrics: true  # Enables exposing OpenTelemetry
 
+      # This defines an exporter for Tempo backend. It sends trace data to a Tempo instance.
       otlp/tempo:
-        endpoint: "http://tempo:4317"
+        endpoint: "http://tempo:4317"  # Sets the endpoint of the Tempo server
+
+        # TLS configuration for the Tempo exporter
         tls:
-          insecure: true
+          insecure: true  # Disables TLS certificate verification (not recommended for production)
 
+      # This defines an exporter for Loki. It sends log data to a Loki server.
       loki:
-        endpoint: "http://loki:3100/loki/api/v1/push"
+        endpoint: "http://loki:3100/loki/api/v1/push"  # Sets the endpoint of the Loki server
 
+      # Pipelines define how data from receivers is processed and exported.
     service:
       pipelines:
+        # This pipeline processes metrics data
         metrics:
           receivers: [otlp, kubeletstats, k8s_cluster]
           processors: [batch]
           exporters: [prometheusremotewrite, debug]
 
+        # This pipeline processes trace data
         traces:
           receivers: [otlp]
           processors: [batch, memory_limiter, k8sattributes]
           exporters: [otlp/tempo]
 
+        # This pipeline processes log data
         logs:
           receivers: [otlp]
           processors: [batch, memory_limiter, k8sattributes]
