@@ -2,6 +2,10 @@
 
 This repository provides configuration and deployment files for the OpenTelemetry Collector in a Kubernetes environment. The collector ingests metrics, traces, and logs from various sources and exports them to backend systems for analysis and monitoring.
 
+**Prerequisites**
+- A Kubernetes cluster
+- Kubectl configured to access the cluster
+
 <h2>Configuration (configmap_collector.yml)</h2>
 
 The configmap_collector.yml file defines the configuration for the OpenTelemetry Collector using a ConfigMap. It contains the following sections:
@@ -49,3 +53,31 @@ The deployment-collector.yml file defines a DaemonSet to deploy the OpenTelemetr
    - "image" Replace with the proper image name
    - Under "VolumeMounts" section ensure to change the mount paths of otel-collector.yml  with your own directory names.
   
+<h1>Grafana, Prometheus, Loki, and Tempo Deployments</h1>
+These services work together to provide monitoring and tracing capabilities for your applications.<br>
+
+**Deploy Configuration Files**
+```bash
+kubectl apply -f configmap-collector.yml
+kubectl apply -f configmap-tempo.yml
+kubectl apply -f configmap-prometheus.yml
+kubectl apply -f configmap-grafana.yml
+```
+
+
+**Deploy Application Components**
+
+```bash
+ kubectl apply -f deployment-collector.yml
+ kubectl apply -f deployment-tempo.yml
+ kubectl apply -f deployment-loki.yml
+ kubectl apply -f deployment-prometheus.yml
+ kubectl apply -f deployment-grafana.yml
+ kubectl apply -f deployment-postgres.yml
+```
+
+**Accessing Services**
+**Grafana**: Once deployed, access the Grafana UI at http://<service-address>:3000 (replace <service-address> with the actual IP address or hostname assigned by the LoadBalancer).<br>
+**Prometheus**: The Prometheus UI is typically not directly exposed. You can access metrics data through the Grafana UI or by scraping Prometheus directly.<br>
+**Loki**: The Loki UI can be accessed at http://<service-address>:3100 (replace <service-address> with the actual IP address or hostname assigned by the LoadBalancer).<br>
+**Tempo**: The Tempo UI is accessible at http://<service-address>:3200 (replace <service-address> with the actual IP address or hostname assigned by the LoadBalancer).
