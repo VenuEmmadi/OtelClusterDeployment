@@ -77,6 +77,7 @@ kubectl apply -f configmap-grafana.yml
 ```
 
 **Accessing Services**
+
 **Grafana**: Once deployed, access the Grafana UI at http://<service-address>:3000 (replace <service-address> with the actual IP address or hostname assigned by the LoadBalancer).<br>
 **Prometheus**: The Prometheus UI is typically not directly exposed. You can access metrics data through the Grafana UI or by scraping Prometheus directly.<br>
 **Loki**: The Loki UI can be accessed at http://<service-address>:3100 (replace <service-address> with the actual IP address or hostname assigned by the LoadBalancer).<br>
