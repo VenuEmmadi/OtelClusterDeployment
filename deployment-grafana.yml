@@ -1,39 +1,54 @@
+# This deployment defines a single instance of the Grafana application.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: grafana
+  name: grafana 
+
 spec:
-  replicas: 1
+  replicas: 1  # Number of Grafana pod replicas to run
+
   selector:
     matchLabels:
-      app: grafana
+      app: grafana  # Label that identifies pods managed by this deployment
+
   template:
     metadata:
       labels:
-        app: grafana
+        app: grafana  # Label applied to the pods created by this deployment
+
     spec:
       containers:
-      - name: grafana
-        image: grafana/grafana
+      - name: grafana  # Name of the container within the pod
+        image: grafana/grafana  # Docker image to use for the container
+
+        # Mount the configuration volume containing the datasource definition
         volumeMounts:
-        - name: config-volume
-          mountPath: /etc/grafana/provisioning/datasources/datasources.yml
-          subPath: datasources.yml
+        - name: config-volume  # Name of the volume to mount
+          mountPath: /etc/grafana/provisioning/datasources/datasources.yml  # Path within the container to mount the volume
+          subPath: datasources.yml  # Specific file within the volume to mount
+
       volumes:
-      - name: config-volume
-        configMap:
-          name: grafana-config
-      restartPolicy: Always
+      - name: config-volume  # Name of the volume
+        configMap:  # Define the volume as a ConfigMap
+          name: grafana-config  # Name of the ConfigMap containing datasource configuration
+
+      restartPolicy: Always  # Restart policy for the container (Always restart on failure)
+
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: grafana
+  name: grafana  
+
 spec:
   selector:
-    app: grafana
+    app: grafana  # Selector to identify pods managed by the Grafana deployment
+
   ports:
-    - protocol: TCP
-      port: 3000
-      targetPort: 3000
-  type: LoadBalancer
+  - protocol: TCP  # Service port protocol
+    port: 3000  # Port on the service (exposed externally)
+    targetPort: 3000  # Port that the container listens on (internally)
+
+  type: LoadBalancer  # Service type to expose the application externally
