@@ -1,40 +1,59 @@
+# This deployment defines a single instance of the Prometheus monitoring service.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prometheus
+  name: prometheus  
+
 spec:
-  replicas: 1
+  replicas: 1  # Number of Prometheus pod replicas to run 
+
   selector:
     matchLabels:
-      app: prometheus
+      app: prometheus  # Label that identifies pods managed by this deployment
+
   template:
     metadata:
       labels:
-        app: prometheus
+        app: prometheus  # Label applied to the pods created by this deployment
+
     spec:
       containers:
-      - name: prometheus
-        image: prom/prometheus
-        args: ["--config.file=/etc/prometheus/prometheus.yml", "--enable-feature=exemplar-storage", "--web.enable-remote-write-receiver"]
+      - name: prometheus  # Name of the container within the pod
+        image: prom/prometheus  # Docker image to use for the container
+        args:  # Additional arguments passed to the Prometheus binary
+          - "--config.file=/etc/prometheus/prometheus.yml"  # Specify config file location
+          - "--enable-feature=exemplar-storage"  # Enable exemplar storage feature
+          - "--web.enable-remote-write-receiver"  # Enable remote write receiver
+
         volumeMounts:
-        - name: config-volume
-          mountPath: /etc/prometheus/prometheus.yml
-          subPath: prometheus.yml
+        - name: config-volume  # Name of the volume to mount
+          mountPath: /etc/prometheus/prometheus.yml  # Path within the container to mount the volume
+          subPath: prometheus.yml  # Specific file within the volume to mount
+
       volumes:
-      - name: config-volume
-        configMap:
-          name: prometheus-config
-      restartPolicy: Always
+      - name: config-volume  # Name of the volume
+        configMap:  # Define the volume as a ConfigMap
+          name: prometheus-config  # Name of the ConfigMap containing Prometheus configuration
+
+      restartPolicy: Always  # Restart policy for the container (Always restart on failure)
+
 ---
+
+# This service exposes the Prometheus deployment as a LoadBalancer
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus
+  name: prometheus  # Name of the service
+
 spec:
   selector:
-    app: prometheus
+    app: prometheus  # Selector to identify pods managed by the Prometheus deployment
+
   ports:
-    - protocol: TCP
-      port: 9090
-      targetPort: 9090
-  type: LoadBalancer
+  - protocol: TCP  # Service port protocol
+    port: 9090  # Port on the service (exposed externally)
+    targetPort: 9090  # Port that the container listens on (internally)
+
+  type: LoadBalancer  # Service type to expose the application externally
