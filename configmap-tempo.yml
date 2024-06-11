@@ -1,44 +1,47 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: tempo-config
+  name: tempo-config  
+
 data:
-  tempo.yml: |
+  tempo.yml:|        # Key for data stored in the ConfigMap (Tempo config file)
     server:
-      http_listen_port: 3200
+      http_listen_port: 3200  # Port for Tempo server to listen on 
 
     distributor:
       receivers:
-        otlp:
+        otlp:  # OpenTelemetry Collector receiver
           protocols:
-            http:
-            grpc:
+            http:  # Enable HTTP protocol for receiving data
+            grpc:   # Enable gRPC protocol for receiving data
 
     ingester:
-      max_block_duration: 5m
+      max_block_duration: 5m  # Maximum duration for an ingest block 
 
     compactor:
       compaction:
-        block_retention: 1h
+        block_retention: 1h  # Minimum retention time for compacted blocks 
 
+    # Metrics generator configuration
     metrics_generator:
       registry:
-        external_labels:
-          source: tempo
-          cluster: docker-compose
+        external_labels:  # Additional labels added to generated metrics
+          source: tempo  # Label indicating data source (tempo)
+          cluster: docker-compose  # Label indicating cluster (docker-compose)
       storage:
-        path: /tmp/tempo/generator/wal
-        remote_write:
-          - url: http://prometheus:9090/api/v1/write
-            send_exemplars: true
+        path: /tmp/tempo/generator/wal  # Local storage path for write-ahead log
+      remote_write:  # Configuration for sending metrics to a remote storage
+        - url: http://prometheus:9090/api/v1/write  # URL of Prometheus push gateway
+          send_exemplars: true  # Send exemplar traces along with metrics
 
     storage:
       trace:
-        backend: local
+        backend: local  # Use local storage for trace data
         wal:
-          path: /tmp/tempo/wal
+          path: /tmp/tempo/wal  # Path for write-ahead log
         local:
-          path: /tmp/tempo/blocks
+          path: /tmp/tempo/blocks  # Path for storing compacted trace data
 
     overrides:
-      metrics_generator_processors: [service-graphs, span-metrics]
+      metrics_generator_processors: [service-graphs, span-metrics]  # Enable specific processors
+        
