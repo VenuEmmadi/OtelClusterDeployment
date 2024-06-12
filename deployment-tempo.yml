@@ -1,48 +1,61 @@
+# This deployment defines a single instance of the Tempo tracing service.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tempo
+  name: tempo  
+
 spec:
-  replicas: 1
+  replicas: 1  # Number of Tempo pod replicas to run 
+
   selector:
     matchLabels:
-      app: tempo
+      app: tempo  # Label that identifies pods managed by this deployment
+
   template:
     metadata:
       labels:
-        app: tempo
+        app: tempo  # Label applied to the pods created by this deployment
+
     spec:
       containers:
-      - name: tempo
-        image: grafana/tempo:latest
-        args:
-          - "-config.file=/etc/tempo.yml"
+      - name: tempo  # Name of the container within the pod
+        image: grafana/tempo:latest  # Docker image to use for the container (latest version)
+        args:  # Arguments passed to the Tempo binary
+          - "-config.file=/etc/tempo.yml"  # Specify configuration file location
+
         volumeMounts:
-        - name: config-volume
-          mountPath: /etc/tempo.yml
-          subPath: tempo.yml
+        - name: config-volume  # Name of the volume to mount
+          mountPath: /etc/tempo.yml  # Path within the container to mount the volume
+          subPath: tempo.yml  # Specific file within the volume to mount
+
       volumes:
-      - name: config-volume
-        configMap:
-          name: tempo-config
-      restartPolicy: Always
+      - name: config-volume  # Name of the volume
+        configMap:  # Define the volume as a ConfigMap
+          name: tempo-config  # Name of the ConfigMap containing Tempo configuration
+
+      restartPolicy: Always  # Restart policy for the container (Always restart on failure)
 
 ---
+
+# This service exposes the Tempo deployment as a LoadBalancer with two ports
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: tempo
+  name: tempo  # Name of the service
+
 spec:
   selector:
-    app: tempo
+    app: tempo  # Selector to identify pods managed by the Tempo deployment
+
   ports:
-    - name: otlp-grpc
-      protocol: TCP
-      port: 4317
-      targetPort: 4317
-    - name: tempo-http
-      protocol: TCP
-      port: 3200
-      targetPort: 3200
-  type: LoadBalancer
+  - name: otlp-grpc  # Descriptive name for the gRPC port
+    protocol: TCP  # Service port protocol
+    port: 4317     # Port on the service (exposed externally) for gRPC
+    targetPort: 4317  # Port that the container listens on (internally) for gRPC
+  - name: tempo-http  # Descriptive name for the HTTP port
+    protocol: TCP  # Service port protocol
+    port: 3200     # Port on the service (exposed externally) for HTTP
+    targetPort: 3200  # Port that the container listens on (internally) for HTTP
+  type: LoadBalancer  # Service type to expose the application externally

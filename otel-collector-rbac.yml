@@ -1,44 +1,59 @@
+# This defines a Kubernetes ServiceAccount resource. ServiceAccounts provide identities for pods to access Kubernetes resources.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  # This defines the name of the ServiceAccount (collector-sa)
   name: collector-sa
+  # This defines the namespace where the ServiceAccount is created (default in this case)
   namespace: default
+
 ---
-apiVersion: rbac.authorization.k8s.io/v1
+
+# This defines a Kubernetes ClusterRole resource. ClusterRoles define a set of permissions that can be referenced by ClusterRoleBindings.
+apiVersion: rbac.authorization.k8.io/v1
 kind: ClusterRole
 metadata:
+  # This defines the name of the ClusterRole (otel-collector-cr)
   name: otel-collector-cr
+
+# This section defines the rules that the ClusterRole grants.
 rules:
+  # These rules allow the ServiceAccount to get, watch, and list pods across all namespaces.
   - apiGroups:
-      - ''
+      - ""  # This refers to the core API group (empty string)
     resources:
-      - 'pods'
-      - 'namespaces'
+      - pods
+      - namespaces
     verbs:
-      - 'get'
-      - 'watch'
-      - 'list'
+      - get
+      - watch
+      - list
+  # These rules allow the ServiceAccount to get, list, and watch replicasets across all namespaces.
+  # The extensions/replicasets group is deprecated, so both groups are included for compatibility.
   - apiGroups:
-      - 'apps'
+      - apps
     resources:
-      - 'replicasets'
+      - replicasets
     verbs:
-      - 'get'
-      - 'list'
-      - 'watch'
+      - get
+      - list
+      - watch
   - apiGroups:
-      - 'extensions'
+      - extensions
     resources:
-      - 'replicasets'
+      - replicasets
     verbs:
-      - 'get'
-      - 'list'
-      - 'watch'
+      - get
+      - list
+      - watch
+  # This rule allows the ServiceAccount to get, watch, and list nodes and their stats.
   - apiGroups: [""]
     resources: ["nodes/stats"]
     verbs: ['get', 'watch', 'list']
+  # These rules allow the ServiceAccount to get and list various resources across all namespaces.
+  # This includes events, namespaces, nodes, pods, replication controllers, resource quotas, and services.
   - apiGroups:
-      - ''
+      - ""
     resources:
       - events
       - namespaces
@@ -55,6 +70,8 @@ rules:
       - get
       - list
       - watch
+  # These rules allow the ServiceAccount to get, list, and watch various deployment resources across all namespaces.
+  # This includes daemonsets, deployments, replicasets, and statefulsets.
   - apiGroups:
       - apps
     resources:
@@ -66,6 +83,7 @@ rules:
       - get
       - list
       - watch
+  # Similar rules for extension API groups (deprecated but included for compatibility).
   - apiGroups:
       - extensions
     resources:
@@ -76,6 +94,7 @@ rules:
       - get
       - list
       - watch
+  # These rules allow the ServiceAccount to get, list, and watch various batch resources across all namespaces.
   - apiGroups:
       - batch
     resources:
@@ -85,6 +104,7 @@ rules:
       - get
       - list
       - watch
+  # These rules allow the ServiceAccount to get, list, and watch horizontal pod autoscalers across all namespaces.
   - apiGroups:
       - autoscaling
     resources:
@@ -93,16 +113,24 @@ rules:
       - get
       - list
       - watch
+
 ---
-apiVersion: rbac.authorization.k8s.io/v1
+
+# This defines a Kubernetes ClusterRoleBinding resource. ClusterRoleBindings associate ClusterRoles with subjects (ServiceAccounts in this case).
+apiVersion: rbac.authorization.k8.io/v1
 kind: ClusterRoleBinding
 metadata:
+  # This defines the name of the ClusterRoleBinding (otel-collector-cr)
   name: otel-collector-cr
+
+# This section defines the subject of the binding (the ServiceAccount)
 subjects:
   - kind: ServiceAccount
     name: collector-sa
-    namespace: default
+    namespace: default  # Reference the same namespace as the ServiceAccount
+
+# This section defines the ClusterRole that this binding references.
 roleRef:
   kind: ClusterRole
   name: otel-collector-cr
-  apiGroup: rbac.authorization.k8s.io
+  apiGroup: rbac.authorization.k8.io

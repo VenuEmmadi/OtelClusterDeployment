@@ -1,11 +1,14 @@
+# This YAML defines a ConfigMap named grafana-config
+# that stores configuration for Grafana datasources.
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana-config
 data:
-  datasources.yml: |
+  datasources.yml:
     apiVersion: 1
 
+    # This section lists all the datasource configurations
     datasources:
       - name: Prometheus
         type: prometheus
@@ -19,9 +22,12 @@ data:
         editable: false
         jsonData:
           httpMethod: GET
+          # This defines where exemplar trace IDs are sent
           exemplarTraceIdDestinations:
             - datasourceUid: tempo
               name: trace_id
+
+      # Second datasource configuration for Loki
       - name: Loki
         type: loki
         uid: loki
@@ -32,6 +38,8 @@ data:
         isDefault: false
         version: 1
         editable: false
+
+      # Third datasource configuration for Tempo (set as default)
       - name: Tempo
         type: tempo
         access: proxy
@@ -41,18 +49,18 @@ data:
         isDefault: true
         version: 1
         editable: false
-        apiVersion: 1
+        apiVersion: 1  
         uid: tempo
         jsonData:
           httpMethod: GET
           serviceMap:
-            datasourceUid: prometheus
+            datasourceUid: prometheus  # Datasource UID used for service mapping
           tracesToLogsV2:
-            datasourceUid: loki
-            spanStartTimeShift: '-1h'
-            spanEndTimeShift: '1h'
-            filterByTraceID: true
-            filterBySpanID: true
-            tags: 
-              - key: 'service.name'
-                value: 'job'
+            datasourceUid: loki        # Datasource UID used for storing logs
+            spanStartTimeShift: '-1h'  # Time shift applied to trace span start time
+            spanEndTimeShift: '1h'     # Time shift applied to trace span end time
+            filterByTraceID: true       # Filter traces by trace ID
+            filterBySpanID: true        # Filter traces by span ID
+            tags:
+              - key: 'service.name'     # Tag key for filtering
+                value: 'job'           # Tag value for filtering
